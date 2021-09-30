@@ -265,9 +265,11 @@ static int bt_get(struct blk_mq_alloc_data *data,
 		/*
 		 * We're out of tags on this hardware queue, kick any
 		 * pending IO submits before going to sleep waiting for
-		 * some to complete.
+		 * some to complete. Note that hctx can be NULL here for
+		 * reserved tag allocation.
 		 */
-		blk_mq_run_hw_queue(hctx, false);
+		if (hctx)
+			blk_mq_run_hw_queue(hctx, false);
 
 		/*
 		 * Retry tag allocation after running the hardware queue,
@@ -509,6 +511,7 @@ static int bt_alloc(struct blk_mq_bitmap_tags *bt, unsigned int depth,
 	bt->bs = kzalloc(BT_WAIT_QUEUES * sizeof(*bt->bs), GFP_KERNEL);
 	if (!bt->bs) {
 		kfree(bt->map);
+		bt->map = NULL;
 		return -ENOMEM;
 	}
 
