@@ -23,6 +23,7 @@
 #include <linux/pm_qos.h>
 #include <linux/clk.h>
 #include <linux/reset.h>
+#include <linux/vmalloc.h>
 #include "jpuconfig.h"
 #include "regdefine.h"
 #include "jpu.h"
@@ -1257,7 +1258,7 @@ static int jpu_release(struct inode *inode, struct file *filp)
 	if (open_count == 0) {
 		if (jdev->s_instance_pool.base) {
 			JLOG(jdev->jdev, "free instance pool\n");
-			vfree((const void *)jdev->s_instance_pool.base);
+			kvfree((const void *)jdev->s_instance_pool.base);
 			jdev->s_instance_pool.base = 0;
 		}
 #ifndef CONFIG_SOC_SPACEMIT_K1_FPGA
@@ -1706,7 +1707,7 @@ static void jpu_remove(struct platform_device *pdev)
 	struct jpu_device *jdev = platform_get_drvdata(pdev);
 
 	if (jdev->s_instance_pool.base) {
-		vfree((const void *)jdev->s_instance_pool.base);
+		kvfree((const void *)jdev->s_instance_pool.base);
 		jdev->s_instance_pool.base = 0;
 	}
 
