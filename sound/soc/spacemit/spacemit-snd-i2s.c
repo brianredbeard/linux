@@ -459,9 +459,8 @@ static int asoc_i2s_sspa_probe(struct platform_device *pdev)
 					       &i2s_sspa_dai[dai_id], 1);
 }
 
-static int asoc_i2s_sspa_remove(struct platform_device *pdev)
+static void asoc_i2s_sspa_remove(struct platform_device *pdev)
 {
-	return 0;
 }
 
 #ifdef CONFIG_OF
